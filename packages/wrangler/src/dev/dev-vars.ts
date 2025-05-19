@@ -1,5 +1,6 @@
 import * as path from "node:path";
-import { loadDotEnv } from "../config";
+import { maybeGetFile } from "@cloudflare/workers-shared";
+import dotenv from "dotenv";
 import { logger } from "../logger";
 import type { Config } from "../config";
 
@@ -18,6 +19,11 @@ import type { Config } from "../config";
  *
  * Any values in this file, formatted like a `dotenv` file, will add to or override `vars`
  * bindings provided in the Wrangler configuration file.
+ *
+ * Note: The `getDotDevDotVarsContent` function in the `packages/vite-plugin-cloudflare/src/index.ts` file
+ *       follows the same logic implemented here, the two need to be kept in sync, so if you modify some logic
+ *       here make sure that, if applicable, the same change is reflected there
+ *
  */
 export function getVarsForDev(
 	config: Pick<Config, "userConfigPath" | "vars">,
@@ -28,7 +34,7 @@ export function getVarsForDev(
 		config.userConfigPath ? path.dirname(config.userConfigPath) : "."
 	);
 	const devVarsPath = path.resolve(configDir, ".dev.vars");
-	const loaded = loadDotEnv(devVarsPath, env);
+	const loaded = loadDotDevDotVars(devVarsPath, env);
 	if (loaded !== undefined) {
 		const devVarsRelativePath = path.relative(process.cwd(), loaded.path);
 		if (!silent) {
@@ -40,5 +46,47 @@ export function getVarsForDev(
 		};
 	} else {
 		return config.vars;
+	}
+}
+
+export interface DotDevDotVars {
+	path: string;
+	parsed: dotenv.DotenvParseOutput;
+}
+
+function tryLoadDotDevDotVars(basePath: string): DotDevDotVars | undefined {
+	try {
+		const contents = maybeGetFile(basePath);
+		if (contents === undefined) {
+			logger.debug(
+				`.env file not found at "${path.relative(".", basePath)}". Continuing... For more details, refer to https://developers.cloudflare.com/workers/wrangler/system-environment-variables/`
+			);
+			return;
+		}
+
+		const parsed = dotenv.parse(contents);
+		return { path: basePath, parsed };
+	} catch (e) {
+		logger.debug(
+			`Failed to load .env file "${path.relative(".", basePath)}":`,
+			e
+		);
+	}
+}
+
+/**
+ * Loads a .dev.vars (or .env style) file from `envPath`, preferring to read `${envPath}.${env}` if
+ * `env` is defined and that file exists.
+ */
+export function loadDotDevDotVars(
+	envPath: string,
+	env?: string
+): DotDevDotVars | undefined {
+	if (env === undefined) {
+		return tryLoadDotDevDotVars(envPath);
+	} else {
+		return (
+			tryLoadDotDevDotVars(`${envPath}.${env}`) ?? tryLoadDotDevDotVars(envPath)
+		);
 	}
 }

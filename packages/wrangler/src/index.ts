@@ -21,7 +21,7 @@ import {
 } from "./cert/cert";
 import { checkNamespace, checkStartupCommand } from "./check/commands";
 import { cloudchamber } from "./cloudchamber";
-import { experimental_readRawConfig, loadDotEnv, readConfig } from "./config";
+import { experimental_readRawConfig, readConfig } from "./config";
 import { containers } from "./containers";
 import { demandSingleValue } from "./core";
 import { CommandRegistry } from "./core/CommandRegistry";
@@ -49,6 +49,7 @@ import {
 	isBuildFailureFromCause,
 } from "./deployment-bundle/build-failures";
 import { dev } from "./dev";
+import { loadDotDevDotVars as loadDotEnv } from "./dev/dev-vars";
 import {
 	dispatchNamespaceCreateCommand,
 	dispatchNamespaceDeleteCommand,
