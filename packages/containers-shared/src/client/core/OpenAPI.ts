@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
-import { Agent } from "undici";
+import { Agent } from "http";
 import type { ApiRequestOptions } from "./ApiRequestOptions";
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;

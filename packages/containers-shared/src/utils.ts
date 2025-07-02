@@ -1,4 +1,5 @@
 import { execFile, spawn, StdioOptions } from "child_process";
+import { randomUUID } from "crypto";
 import { existsSync, statSync } from "fs";
 import path from "path";
 import { dockerImageInspect } from "./inspect";
@@ -186,4 +187,11 @@ export async function checkExposedPorts(
 				"To develop containers locally on non-Linux platforms, you must expose any ports that you call with `getTCPPort()` in your Dockerfile."
 		);
 	}
+}
+
+/**
+ * Generates a random container build id
+ */
+export function generateContainerBuildId() {
+	return randomUUID().slice(0, 8);
 }
