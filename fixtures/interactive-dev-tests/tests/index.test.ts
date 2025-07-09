@@ -297,7 +297,7 @@ baseDescribe.skipIf(process.platform !== "linux" && process.env.CI === "true")(
 	() => {
 		let tmpDir: string;
 		beforeAll(async () => {
-			console.log("bust cache");
+			console.log("bust cache again");
 			tmpDir = fs.mkdtempSync(path.join(tmpdir(), "wrangler-container-"));
 			fs.cpSync(
 				path.resolve(__dirname, "../", "container-app"),
