@@ -35,14 +35,40 @@ export function prefixError(prefix: string, e: any): Error {
 	return e;
 }
 
-function dimInternalStackLine(line: string): string {
-	if (
-		line.startsWith("    at") &&
-		(!line.includes(cwd) || line.includes(cwdNodeModules))
-	) {
-		return dim(line);
+// Regex matches V8 stack frame lines with and without function name:
+//   at fnName (file:line:col)
+//   at file:line:col
+const frameRegex = /^\s*at(?:\s+[^\s()]+)?\s*\(?(.+?)\)?$/;
+/**
+ * Processes a stack trace by applying a custom frame transformer.
+ * The transformer receives each frame line and its location (file:line:column);
+ * if it returns null, that frame is dropped; otherwise its return value replaces the line.
+ */
+export function processStackTrace(
+	stack: string,
+	transformFrame: (line: string, location: string) => string | null
+): string {
+	const lines = stack.split("\n");
+	const result: string[] = [];
+
+	for (const line of lines) {
+		const match = frameRegex.exec(line);
+
+		if (match) {
+			const location = match[1];
+			const transformed = transformFrame(line, location);
+			if (transformed !== null) {
+				result.push(transformed);
+			}
+
+			continue; // if transformed is null, drop the frame
+		}
+
+		// Non-frame lines (e.g., error message) are preserved
+		result.push(line);
 	}
-	return line;
+
+	return result.join("\n");
 }
 
 /**
@@ -60,11 +86,14 @@ export function formatError(error: Error): string {
 	let message: string;
 
 	if (error.stack) {
-		message = error.stack
-			.split("\n")
-			// Dim internal stack trace lines to highlight user code
-			.map(dimInternalStackLine)
-			.join("\n");
+		message = processStackTrace(error.stack, (line) => {
+			if (!line.includes(cwd) || line.includes(cwdNodeModules)) {
+				// Dim internal stack trace lines to highlight user code
+				return dim(line);
+			}
+
+			return line;
+		});
 	} else {
 		message = error.toString();
 	}

@@ -352,7 +352,7 @@ test("responds with pretty error page", async (t) => {
 	t.regex(res.headers.get("Content-Type") ?? "", /^text\/html/);
 	const text = await res.text();
 	// ...including error, request method, URL and headers
-	t.regex(text, /Test error!/);
+	t.regex(text, /Unusual oops!/);
 	t.regex(text, /Method.+POST/is);
 	t.regex(text, /URL.+some-unusual-path/is);
 	t.regex(text, /X-Unusual-Key.+some-unusual-value/is);
@@ -361,12 +361,12 @@ test("responds with pretty error page", async (t) => {
 	const errorLogs = log.getLogs(LogLevel.ERROR);
 	t.deepEqual(errorLogs, [
 		`Error: Unusual oops!
-    at doSomething (script)
-    at Object.fetch (script)
+    at doSomething (script-0:6:12)
+    at Object.fetch (script-0:30:6)
 Caused by: Error: Test error
-    at oops (script)
-    at doSomething (script)
-    at Object.fetch (script)`,
+    at oops (script-0:13:11)
+    at doSomething (script-0:4:5)
+    at Object.fetch (script-0:30:6)`,
 	]);
 
 	// Check `fetch()` accepting HTML returns pretty-error page
