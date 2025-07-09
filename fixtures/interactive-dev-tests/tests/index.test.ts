@@ -291,9 +291,10 @@ it.each(exitKeys)("multiworker cleanly exits with $name", async ({ key }) => {
 
 // it seems like if we spam the container too often, it freezes up and crashes
 const WAITFOR_OPTIONS = { timeout: 2000, interval: 500 };
-baseDescribe
-	.skipIf(process.platform !== "linux" && process.env.CI === "true")
-	.only("container dev", { retry: 0, timeout: 90000 }, () => {
+baseDescribe.skipIf(process.platform !== "linux" && process.env.CI === "true")(
+	"container dev",
+	{ retry: 0, timeout: 90000 },
+	() => {
 		let tmpDir: string;
 		beforeAll(async () => {
 			tmpDir = fs.mkdtempSync(path.join(tmpdir(), "wrangler-container-"));
@@ -438,7 +439,8 @@ baseDescribe
 				expect(remainingIds.length).toBe(0);
 			});
 		});
-	});
+	}
+);
 
 /** gets any containers that were created by running this fixture */
 const getContainerIds = () => {
