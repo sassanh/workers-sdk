@@ -1,5 +1,11 @@
 # @cloudflare/workers-shared
 
+## 0.18.2
+
+### Patch Changes
+
+- [#9884](https://github.com/cloudflare/workers-sdk/pull/9884) [`a60e9da`](https://github.com/cloudflare/workers-sdk/commit/a60e9daf63d0d4918c134a45512e861d399c96c3) Thanks [@matthewdavidrodgers](https://github.com/matthewdavidrodgers)! - Adds metrics for time-to-dispatch to Router Worker
+
 ## 0.18.1
 
 ### Patch Changes

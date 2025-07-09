@@ -1,5 +1,13 @@
 # @cloudflare/containers-shared
 
+## 0.2.4
+
+### Patch Changes
+
+- [#9879](https://github.com/cloudflare/workers-sdk/pull/9879) [`e10c3e2`](https://github.com/cloudflare/workers-sdk/commit/e10c3e2a6b3049d23b58cbc63eef1756233cf9c3) Thanks [@dario-piotrowicz](https://github.com/dario-piotrowicz)! - fix: enable Dockerfile exposed port validation on linux as well
+
+- [#9879](https://github.com/cloudflare/workers-sdk/pull/9879) [`e10c3e2`](https://github.com/cloudflare/workers-sdk/commit/e10c3e2a6b3049d23b58cbc63eef1756233cf9c3) Thanks [@dario-piotrowicz](https://github.com/dario-piotrowicz)! - update error message presented when no port is exported by the image
+
 ## 0.2.3
 
 ### Patch Changes
