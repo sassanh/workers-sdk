@@ -50,7 +50,11 @@ describe
 
 		afterAll(() => {
 			[remoteWorkerName, alternativeRemoteWorkerName].forEach((worker) => {
-				execSync(`npx wrangler delete --name ${worker}`);
+				try {
+					execSync(`npx wrangler delete --name ${worker}`);
+				} catch (error) {
+					console.error("Error cleaning up remote worker: " + worker, error);
+				}
 			});
 		});
 
