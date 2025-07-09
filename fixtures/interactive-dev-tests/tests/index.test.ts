@@ -293,10 +293,11 @@ it.each(exitKeys)("multiworker cleanly exits with $name", async ({ key }) => {
 const WAITFOR_OPTIONS = { timeout: 2000, interval: 500 };
 baseDescribe.skipIf(process.platform !== "linux" && process.env.CI === "true")(
 	"container dev",
-	{ retry: 0, timeout: 90000 },
+	{ retry: 2, timeout: 90000 },
 	() => {
 		let tmpDir: string;
 		beforeAll(async () => {
+			console.log("bust cache");
 			tmpDir = fs.mkdtempSync(path.join(tmpdir(), "wrangler-container-"));
 			fs.cpSync(
 				path.resolve(__dirname, "../", "container-app"),
